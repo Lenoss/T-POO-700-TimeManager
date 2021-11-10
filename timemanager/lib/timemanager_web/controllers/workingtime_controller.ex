@@ -4,31 +4,38 @@ defmodule TimemanagerWeb.WorkingtimeController do
   alias Timemanager.Data
   alias Timemanager.Data.Workingtime
 
-  action_fallback TimemanagerWeb.FallbackController
+  action_fallback(TimemanagerWeb.FallbackController)
 
-  def index(conn, %{"userID" => userId, "start" => workingStart, "end" => workingEnd}) do
-    user_id = String.to_integer(userId)
-    workingtimes = Data.get_workingtime_by!(user_id, workingStart, workingEnd)
+  def index(conn, _params) do
+    workingtimes = Data.list_workingtimes()
     render(conn, "index.json", workingtimes: workingtimes)
   end
 
-  def create(conn, _params) do
-    with {:ok, %Workingtime{} = _params} <-
-           Data.create_workingtime(%{
-             start: _params["workingtimes"]["start"],
-             end: _params["workingtimes"]["end"],
-             user: _params["userID"]
-           }) do
+  def create(conn, %{"user_id" => user_id}) do
+    params = Map.merge(%{"user_id" => user_id}, conn.body_params["workingtime"])
+
+    with {:ok, %Workingtime{} = workingtime} <- Data.create_workingtime(params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", Routes.workingtime_path(conn, :show, _params))
-      |> render("show.json", workingtime: _params)
+      |> render("show.json", workingtime: workingtime)
     end
   end
 
-  def show(conn, %{"userID" => userId, "id" => id}) do
-    workingtime = Data.get_workingtime_by_user!(userId, id)
+  def show(conn, %{"user_id" => userID, "start" => start, "end" => ennd}) do
+    user_id = String.to_integer(userID)
+
+    workingtimes = Data.list_workingtimes_schedule(user_id, start, ennd)
+    render(conn, "index.json", workingtimes: workingtimes)
+  end
+
+  def show(conn, %{"user_id" => user_id, "id" => id}) do
+    workingtime = Data.list_workingtimes_by_user_and_id(user_id, id)
     render(conn, "index.json", workingtimes: workingtime)
+  end
+
+  def show(conn, %{"user_id" => user_id}) do
+    workingtimes = Data.list_workingtimes_by_user(user_id)
+    render(conn, "index.json", workingtimes: workingtimes)
   end
 
   def update(conn, %{"id" => id, "workingtime" => workingtime_params}) do
@@ -46,5 +53,9 @@ defmodule TimemanagerWeb.WorkingtimeController do
     with {:ok, %Workingtime{}} <- Data.delete_workingtime(workingtime) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def options(conn, _, _) do
+    send_resp(conn, 200, "Access-Control-Allow-Origin: *")
   end
 end

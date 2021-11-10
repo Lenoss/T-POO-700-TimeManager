@@ -33,11 +33,11 @@
       <div class="col-lg-4">
         <card type="chart" id="short-card">
           <template slot="header">
-            <h5 class="card-category">Lorem ipsum</h5>
-            <h2 class="card-title">Lorem Ipsum</h2>
+            <h5 class="card-category">Work Management</h5>
+            <h2 class="card-title">Hours details</h2>
           </template>
           <div class="chart-area">
-            <PieChart />
+            <PieChart v-if="done" :pieData="pieData" />
           </div>
         </card>
       </div>
@@ -102,36 +102,64 @@ export default {
         December: 0,
       },
       wArr: {},
+      pieData: {
+        overtime: 0,
+        normal: 0,
+        night: 1,
+        majorated : 0
+      }
     };
   },
   created() {
     let currentYear = new Date().getFullYear();
     axios
       .get(
-        `${apiEndPoint}/workingtimes/${user}?start=${currentYear}-01-01T00:00:00&end=${currentYear}-12-31T23:59:59`
+        // `${apiEndPoint}/workingtimes/${user}?start=${currentYear}-01-01T00:00:00&end=${currentYear}-12-31T23:59:59`
+        `${apiEndPoint}/workingtimes/${user}`
       )
       .then((response) => {
         let yearWorkingTimes = response.data.data;
         let wk = moment(new Date()).week();
         let firstWeek = wk - 12;
-
+        let majorated = 0;
         for (let i = 0; i < 12; i++) {
           this.wArr[wk - 11 + i] = 0;
         }
         yearWorkingTimes.forEach((element) => {
-          let month = new Date(element.start).toLocaleString("en-EN", {
-            month: "long",
-          });
           let elementStart = new Date(element.start);
           let elementEnd = new Date(element.end);
           let diff = moment(elementEnd).diff(moment(elementStart), "hours");
-          this.arrayWorkingTimes[month] += diff;
-          let elementWeek = moment(elementStart).week();
 
-          if (elementWeek >= firstWeek) {
-            this.wArr[wk - (wk - elementWeek)] += diff;
+          // Hour per month Bar Chart
+          if (new Date().getFullYear() == elementStart.getFullYear()) {
+            let month = elementStart.toLocaleString("en-EN", {
+              month: "long",
+            });
+
+            this.arrayWorkingTimes[month] += diff;
+            let elementWeek = moment(elementStart).week();
+
+            if (elementWeek >= firstWeek) {
+              this.wArr[wk - (wk - elementWeek)] += diff;
+            }
           }
+          // console.log(elementStart.getHours());
+
+          // Pie Chart Majorated hours
+          if (diff > 7) {
+            this.pieData.overtime += diff - 7;
+          }
+          else this.pieData.normal += diff;
+
+          // Pie Chart weekend hours
+          if (elementStart.getDay() == 0 || elementStart.getDay() == 6){
+            this.pieData.majorated += diff;
+          }
+          // if (elementStart.getHours() < 7 && elementStart.getHours() >= 21) {
+          //   Majorated += diff;
+          // }
         });
+        console.log(this.pieData);
 
         this.done = true;
       })

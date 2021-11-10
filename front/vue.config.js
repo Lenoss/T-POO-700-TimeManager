@@ -33,7 +33,5 @@ module.exports = {
   css: {
     // Enable CSS source maps.
     sourceMap: process.env.NODE_ENV !== 'production'
-  },
-    outputDir: '/Users/alexandre/Desktop/Epitech/MSC1/TimeManager/AndroidApp/Boostrap/hello/www',
-    publicPath: './'
+  }
 };

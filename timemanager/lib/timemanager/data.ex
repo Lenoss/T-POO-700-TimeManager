@@ -133,20 +133,25 @@ defmodule Timemanager.Data do
   """
   def get_workingtime!(id), do: Repo.get!(Workingtime, id)
 
-  # Gets ALL workingtime of user.
-  def get_workingtime_by!(userid, workingStart, workingEnd) do
-    query = from m in Workingtime,
-    where: m.user == ^userid and m.start >= ^workingStart and m.end <= ^workingEnd
-    #   from m in Workingtime,
-    #     where: m.user == ^userid and m.start >= ^workingStart and m.end <= ^workingEndc
+  def list_workingtimes_by_user(user_id) do
+    query = from(w in Workingtime, where: w.user == ^user_id)
     Repo.all(query)
-    # Repo.all(Workingtime, user: userid)
   end
 
-  def get_workingtime_by_user!(userid, id) do
-    query = from m in Workingtime, where: m.id == ^id and m.user == ^userid
+  def list_workingtimes_by_user_and_id(user_id, id) do
+    query = from(w in Workingtime, where: w.user == ^user_id and w.id == ^id)
     Repo.all(query)
   end
+
+  def list_workingtimes_schedule(userid, startTime, endTime) do
+    query =
+      from(m in Workingtime,
+        where: m.user == ^userid and m.start >= ^startTime and m.end <= ^endTime
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Creates a workingtime.
 
