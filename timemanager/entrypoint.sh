@@ -27,6 +27,4 @@ else
     echo "Database $PGDATABASE reset."
 fi
 
-exec psql -U postgres -d timemanager_dev -f timemanager_dev.sql
-
 exec mix phx.server
