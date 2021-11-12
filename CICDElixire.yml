@@ -46,21 +46,21 @@
         - '/:/buddy/t-poo-700-timemanager'
       cache_base_image: true
       shell: BASH
-    - action: Upload files to 52.15.174.16
+    - action: Upload files to 3.17.204.97
       type: SFTP
       input_type: SCM_REPOSITORY
       remote_path: /home/ubuntu/T-POO-700-TimeManager
       login: ubuntu
       password: secure!IN81U0tpDX9m9T8T5N6/tw==.GLA6tdeZcxWNIPbVgSHdQw==
-      host: 52.15.174.16
+      host: 3.17.204.97
       port: '22'
       authentication_mode: PASS
-    - action: '[52.15.174.16] Execute: docker-compose up'
+    - action: '[3.17.204.97] Execute: docker-compose up'
       type: SSH_COMMAND
       working_directory: /home/ubuntu/T-POO-700-TimeManager
       login: ubuntu
       password: secure!IN81U0tpDX9m9T8T5N6/tw==.GLA6tdeZcxWNIPbVgSHdQw==
-      host: 52.15.174.16
+      host: 3.17.204.97
       port: '22'
       authentication_mode: PASS
       commands:
