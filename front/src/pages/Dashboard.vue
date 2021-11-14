@@ -44,8 +44,8 @@
       <div class="col-lg-4">
         <card type="chart" id="medium-card">
           <template slot="header">
-            <h5 class="card-category">Lorem Ipsum</h5>
-            <h2 class="card-title">Lorem Ipsum</h2>
+            <h5 class="card-category"> </h5>
+            <h2 class="card-title"> </h2>
           </template>
           <div class="chart-area">
             <AreaChart />
@@ -67,7 +67,6 @@ import authHeader from "../services/auth-header";
 
 const apiEndPoint = process.env.VUE_APP_API_ENDPOINT;
 
-let user = "1";
 export default {
   name: "App",
   components: {
@@ -78,12 +77,7 @@ export default {
   },
   data() {
     return {
-      chartData: {
-        GrossSalary: 2500,
-        NetSalary: 1750,
-        IncomeTaxes: 750,
-        Taxes: 900,
-      },
+
       done: false,
 
       barWeekChart: true,
@@ -106,7 +100,7 @@ export default {
       pieData: {
         overtime: 0,
         normal: 0,
-        night: 1,
+        night: 0,
         majorated: 0,
       },
     };

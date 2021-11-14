@@ -47,5 +47,7 @@ defmodule TimemanagerWeb.Endpoint do
   plug Plug.Head
   plug CORSPlug
   plug Plug.Session, @session_options
+  plug Pow.Plug.Session, otp_app: :timemanager
+
   plug TimemanagerWeb.Router
 end

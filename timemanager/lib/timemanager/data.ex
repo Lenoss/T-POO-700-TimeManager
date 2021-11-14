@@ -20,10 +20,12 @@ defmodule Timemanager.Data do
   # end
   def authenticate_user(email, password) do
     query = from u in User, where: u.email == ^email
+
     case Repo.one(query) do
       nil ->
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
+
       user ->
         if Bcrypt.verify_pass(password, user.password_hash) do
           {:ok, user}
@@ -32,6 +34,7 @@ defmodule Timemanager.Data do
         end
     end
   end
+
   # defp email_password_auth(email, password) when is_binary(email) and is_binary(password) do
   #   with {:ok, user} <- get_by_email(email),
   #        do: verify_password(password, user)
@@ -161,6 +164,12 @@ defmodule Timemanager.Data do
       [%Workingtime{}, ...]
 
   """
+  def promote(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
   def list_workingtimes do
     Repo.all(Workingtime)
   end
@@ -359,5 +368,217 @@ defmodule Timemanager.Data do
   """
   def change_clock(%Clock{} = clock, attrs \\ %{}) do
     Clock.changeset(clock, attrs)
+  end
+
+  alias Timemanager.Data.Team
+
+  @doc """
+  Returns the list of teams.
+
+  ## Examples
+
+      iex> list_teams()
+      [%Team{}, ...]
+
+  """
+  def list_teams do
+    Repo.all(Team)
+  end
+
+
+  @doc """
+  Gets a single team.
+
+  Raises `Ecto.NoResultsError` if the Team does not exist.
+
+  ## Examples
+
+      iex> get_team!(123)
+      %Team{}
+
+      iex> get_team!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_team!(id), do: Repo.get!(Team, id)
+
+  @doc """
+  Creates a team.
+
+  ## Examples
+
+      iex> create_team(%{field: value})
+      {:ok, %Team{}}
+
+      iex> create_team(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_team(attrs \\ %{}) do
+    %Team{}
+    |> Team.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a team.
+
+  ## Examples
+
+      iex> update_team(team, %{field: new_value})
+      {:ok, %Team{}}
+
+      iex> update_team(team, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_team(%Team{} = team, attrs) do
+    team
+    |> Team.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a team.
+
+  ## Examples
+
+      iex> delete_team(team)
+      {:ok, %Team{}}
+
+      iex> delete_team(team)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_team(%Team{} = team) do
+    Repo.delete(team)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking team changes.
+
+  ## Examples
+
+      iex> change_team(team)
+      %Ecto.Changeset{data: %Team{}}
+
+  """
+  def change_team(%Team{} = team, attrs \\ %{}) do
+    Team.changeset(team, attrs)
+  end
+
+  alias Timemanager.Data.Managing
+  def list_managing_team(teamId) do
+    query=from m in Managing, where: m.teamId == ^teamId
+    Repo.all(query)
+  end
+
+  def list_managing_manager(managerId) do
+    query=from m in Managing, where: m.employeeId == ^managerId, where: m.isManager == true
+    Repo.all(query)
+  end
+  @doc """
+  Returns the list of managing.
+
+  ## Examples
+
+      iex> list_managing()
+      [%Managing{}, ...]
+
+  """
+  def list_managing do
+    Repo.all(Managing)
+  end
+
+  @doc """
+  Gets a single managing.
+
+  Raises `Ecto.NoResultsError` if the Managing does not exist.
+
+  ## Examples
+
+      iex> get_managing!(123)
+      %Managing{}
+
+      iex> get_managing!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_managing!(id) do
+    query=from m in Managing, where: m.employeeId == ^id, where: m.isManager == true
+    user = Repo.all(query)
+    IO.inspect(user)
+    if (!is_nil(user)) do
+      teams = for usr <- user, do: usr.teamId
+      query=from m in Managing, where: m.teamId in ^teams, where: m.isManager == false
+      Repo.all(query)
+    else
+      []
+    end
+
+  end
+  @doc """
+  Creates a managing.
+
+  ## Examples
+
+      iex> create_managing(%{field: value})
+      {:ok, %Managing{}}
+
+      iex> create_managing(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_managing(attrs \\ %{}) do
+    %Managing{}
+    |> Managing.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a managing.
+
+  ## Examples
+
+      iex> update_managing(managing, %{field: new_value})
+      {:ok, %Managing{}}
+
+      iex> update_managing(managing, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_managing(%Managing{} = managing, attrs) do
+    managing
+    |> Managing.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a managing.
+
+  ## Examples
+
+      iex> delete_managing(managing)
+      {:ok, %Managing{}}
+
+      iex> delete_managing(managing)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_managing(%Managing{} = managing) do
+    Repo.delete(managing)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking managing changes.
+
+  ## Examples
+
+      iex> change_managing(managing)
+      %Ecto.Changeset{data: %Managing{}}
+
+  """
+  def change_managing(%Managing{} = managing, attrs \\ %{}) do
+    Managing.changeset(managing, attrs)
   end
 end

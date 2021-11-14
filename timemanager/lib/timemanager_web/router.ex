@@ -1,6 +1,7 @@
 defmodule TimemanagerWeb.Router do
   use TimemanagerWeb, :router
   alias Timemanager.Guardian
+  use Pow.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -19,6 +20,10 @@ defmodule TimemanagerWeb.Router do
     plug Guardian.AuthPipeline
   end
 
+  pipeline :GeneralManager do
+    plug Timemanager.EnsureRolePlug, :GeneralManager
+  end
+
   scope "/", TimemanagerWeb do
     pipe_through :browser
 
@@ -35,6 +40,11 @@ defmodule TimemanagerWeb.Router do
     end
   end
 
+  # scope "/api", TimemanagerWeb do
+  #   pipe_through [:api, :jwt_authenticated, :GeneralManager]
+  #   put("/users/:userID/promote", UserController, :promote)
+  # end
+
   # Other scopes may use custom stacks.
   scope "/api", TimemanagerWeb do
     pipe_through [:api, :jwt_authenticated]
@@ -44,6 +54,7 @@ defmodule TimemanagerWeb.Router do
       get("/:userID", UserController, :show)
       delete("/:userID", UserController, :delete)
       put("/:userID", UserController, :update)
+      put("/:userID/promote", UserController, :promote)
     end
 
     scope "/clocks" do
@@ -60,6 +71,10 @@ defmodule TimemanagerWeb.Router do
       delete "/:id", WorkingtimeController, :delete
     end
 
+    scope "/managing" do
+      get "/team/:teamId", ManagingController, :show_team
+      get "/:userID", ManagingController, :show
+    end
     # resources("/workingtimes", WorkingtimeController, only: [:show])
     # resources("/workingtimes/:userID", WorkingtimeController, only: [:create])
   end

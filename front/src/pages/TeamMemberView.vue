@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="p-3 text-center">USER MANAGEMENT</h3>
+    <h3 class="p-3 text-center">TEAM MANAGEMENT</h3>
     <div class="table-responsive">
       <table class="table table-striped table-bordered">
         <thead>
@@ -12,23 +12,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in filterUsers" :key="user.id">
+          <tr v-for="user in teamMembers" :key="user.id">
             <td>{{ user.firstname }} {{ user.lastname }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
             <td>
-              <button
-                class="btn btn-success m-1"
-                v-on:click="promoteUser(user.id)"
-              >
-                Promote
-              </button>
-              <button
-                class="btn btn-danger m-1"
-                v-on:click="deleteUser(user.id)"
-              >
-                Delete
-              </button>
               <button
                 class="btn btn-success m-1"
                 v-on:click="getDashboard(user)"
@@ -90,8 +78,8 @@
       <div class="col-lg-4">
         <card type="chart" id="medium-card">
           <template slot="header">
-            <h5 class="card-category"> </h5>
-            <h2 class="card-title"> </h2>
+            <h5 class="card-category"></h5>
+            <h2 class="card-title"></h2>
           </template>
           <!-- <div class="chart-area">
             <AreaChart />
@@ -109,31 +97,19 @@ import BarWeekChart from "./Chart/BarWeekChart.vue";
 import BarMonthChart from "./Chart/BarMonthChart.vue";
 import PieChart from "./Chart/PieChart.vue";
 import moment from "moment";
-
 const apiEndPoint = process.env.VUE_APP_API_ENDPOINT;
-
 export default {
-  name: "App",
   components: {
     BarWeekChart,
     BarMonthChart,
     PieChart,
   },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    },
-
-    filterUsers: function () {
-      return this.users.filter(function (u) {
-        return u.role != "GeneralManager";
-      });
-    },
-  },
-
   data() {
     return {
+      search: "",
       users: [],
+      teamMembersId: [],
+      teamMembers: [],
       done: false,
       selectedUser: "",
       barWeekChart: true,
@@ -161,13 +137,18 @@ export default {
       },
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   methods: {
     getDashboard(user) {
       this.done = false;
       for (const [key, value] of Object.entries(this.arrayWorkingTimes)) {
         this.arrayWorkingTimes[key] = 0;
       }
-        for (const [key, value] of Object.entries(this.pieData)) {
+      for (const [key, value] of Object.entries(this.pieData)) {
         this.pieData[key] = 0;
       }
       console.log(this.arrayWorkingTimes);
@@ -228,6 +209,16 @@ export default {
           this.errors.push(e);
         });
     },
+    getUser(id) {
+      axios
+        .get(`${apiEndPoint}/users/${id}`, authHeader())
+        .then((response) => {
+          this.teamMembers.push(response.data.data);
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
+    },
     month() {
       this.barWeekChart = false;
       this.barMonthChart = true;
@@ -236,63 +227,56 @@ export default {
       this.barWeekChart = true;
       this.barMonthChart = false;
     },
-    getUsers() {
+    getTeamMembers() {
       axios
-        .get(`${apiEndPoint}/users`, authHeader())
+        .get(
+          `${apiEndPoint}/managing/${this.currentUser.user_id}`,
+          authHeader()
+        )
         .then((response) => {
-          this.users = response.data.data;
-          console.log(this.users);
+          response.data.data.forEach((element) => {
+            this.teamMembersId.push(element.employeeId);
+            this.getUser(element.employeeId);
+          });
+          console.log(this.teamMembers);
+          // console.log(this.teamMembers)
+          // for (const [key, value] of Object.entries(response.data.data)) {
+          //  this.teamMembersId.push()
+          // }
         })
         .catch((e) => {
           this.errors.push(e);
         });
     },
-    promoteUser(id) {
-      if (confirm("Are you sure to promote this user to Manager?")) {
-        axios
-          .put(
-            `${apiEndPoint}/users/${id}`,
-            {
-              user: {
-                role: "Manager",
-              },
-            },
-            authHeader()
-          )
-          .then((response) => {
-            this.getUsers();
-          })
-          .catch((e) => {
-            this.errors.push(e);
-          });
-      }
+    getUserWorkingTimes(id) {
+      axios
+        .get(`${apiEndPoint}/workingtimes/${id}`, authHeader())
+        .then((response) => {
+          return response.data.data;
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
     },
-    deleteUser(id) {
-      if (confirm("Are you sure to delete this user?")) {
-        axios
-          .delete(
-            `${apiEndPoint}/users/${id}`,
-
-            authHeader()
-          )
-          .then((response) => {
-            this.getUsers();
-          })
-          .catch((e) => {
-            this.errors.push(e);
-          });
-      }
+    workingTimes(userId) {
+      axios.get(`${apiEndPoint}/workingtimes/${userId}`).then((response) => {
+        return response.end; //quoi mettre? dans la table working time il y a start et end mais pas de temps de travail
+      });
     },
   },
-  //  .put(this.path + '/' + id + '/promote', {
-  //     user: {
-  //       role: 1
-  //     }
-  mounted() {
-    this.getUsers();
+  created() {
+    this.getTeamMembers();
   },
+  // methods:{
+  //   result() {
+  //     return this.users.filter((user) => {
+  //       return user.firstname.toLowerCase().startsWith(this.Search);
+  //     })
+  //   }
+  // }
 };
 </script>
+
 <style scope="">
 thead {
   background-color: rgba(39, 41, 61, 1);

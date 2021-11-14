@@ -54,4 +54,32 @@ defmodule Timemanager.DataFixtures do
 
     clock
   end
+
+  @doc """
+  Generate a team.
+  """
+  def team_fixture(attrs \\ %{}) do
+    {:ok, team} =
+      attrs
+      |> Enum.into(%{
+        name: "some name"
+      })
+      |> Timemanager.Data.create_team()
+
+    team
+  end
+
+  @doc """
+  Generate a managing.
+  """
+  def managing_fixture(attrs \\ %{}) do
+    {:ok, managing} =
+      attrs
+      |> Enum.into(%{
+        isManager: true
+      })
+      |> Timemanager.Data.create_managing()
+
+    managing
+  end
 end

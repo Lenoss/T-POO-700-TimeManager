@@ -6,7 +6,11 @@ export default {
   props: {
     arrayWorkingTimes: Object
   },
-
+  watch: {
+    arrayWorkingTimes: function (newValue, oldValue) {
+      console.log("newValue: %s, previousValue: %s", newValue, oldValue);
+    }
+  },
   mounted() {
     let chartData = [];
     for (const [key, value] of Object.entries(this.arrayWorkingTimes)) {

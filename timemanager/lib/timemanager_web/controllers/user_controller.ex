@@ -52,4 +52,12 @@ defmodule TimemanagerWeb.UserController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def promote(conn, %{"userID" => id, "user" => user_params}) do
+    user = Data.get_user!(id)
+
+    with {:ok, %User{} = user} <- Data.promote(user, user_params) do
+      render(conn, "show.json", user: user)
+    end
+  end
 end

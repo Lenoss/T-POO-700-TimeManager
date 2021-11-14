@@ -1,5 +1,7 @@
 defmodule Timemanager.Data.User do
   use Ecto.Schema
+  use Pow.Ecto.Schema
+
   import Ecto.Changeset
   import Bcrypt
 
@@ -16,24 +18,50 @@ defmodule Timemanager.Data.User do
 
     field :password, :string, virtual: true
 
+
     timestamps()
+  end
+
+  def changeset_role(user_or_changeset, attrs) do
+    user_or_changeset
+    |> Changeset.cast(attrs, [:role])
+    |> Changeset.validate_inclusion(:role, ~w(Member GeneralManager))
   end
 
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:address, :city, :country, :email, :firstname, :lastname, :role, :zipcode, :password])
-    |> validate_required([:address, :city, :country, :email, :firstname, :lastname, :role, :zipcode])
+    |> cast(attrs, [
+      :address,
+      :city,
+      :country,
+      :email,
+      :firstname,
+      :lastname,
+      :role,
+      :zipcode,
+      :password
+    ])
+    |> validate_required([
+      :address,
+      :city,
+      :country,
+      :email,
+      :firstname,
+      :lastname,
+      :role,
+      :zipcode
+    ])
     |> put_password_hash
   end
 
   defp put_password_hash(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: pass}}
-        ->
-          put_change(changeset, :password_hash, hash_pwd_salt(pass))
+      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
+        put_change(changeset, :password_hash, hash_pwd_salt(pass))
+
       _ ->
-          changeset
+        changeset
     end
   end
 end

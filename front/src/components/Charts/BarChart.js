@@ -4,6 +4,7 @@ export default {
   name: 'bar-chart',
   extends: Bar,
   mixins: [mixins.reactiveProp],
+
   props: {
     extraOptions: Object,
     gradientColors: {

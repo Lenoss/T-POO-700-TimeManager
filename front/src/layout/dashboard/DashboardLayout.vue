@@ -13,8 +13,18 @@
           :name="$t('sidebar.dashboard')"
           icon="tim-icons icon-chart-pie-36"
         />
-        <!-- <sidebar-link to="/notifications" :name="$t('sidebar.notifications')" icon="tim-icons icon-bell-55"/> -->
-        <!-- <sidebar-link to="/table-list" :name="$t('sidebar.tableList')" icon="tim-icons icon-puzzle-10"/> -->
+
+        <sidebar-link v-if="currentUser.role == 'Manager'"
+          to="/team-review"
+          :name="$t('Team Management')"
+          icon="tim-icons icon-notes"
+        />
+
+        <sidebar-link v-if="currentUser.role == 'GeneralManager'"
+          to="/general-manager"
+          :name="$t('General Management')"
+          icon="tim-icons icon-notes"
+        />
       </template>
     </side-bar>
     <div class="main-panel">
@@ -33,7 +43,13 @@ import TopNavbar from "./TopNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
+
 export default {
+    computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   components: {
     TopNavbar,
     ContentFooter,

@@ -29,6 +29,9 @@ config :timemanager, Timemanager.Mailer, adapter: Swoosh.Adapters.Local
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
 
+config :timemanager, :pow,
+  user: Timemanager.Users.User,
+  repo: Timemanager.Repo
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.12.18",
@@ -38,6 +41,10 @@ config :esbuild,
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
+# Guardian config
+config :Timemanager, Timemanager.Guardian,
+       issuer: "Timemanager",
+       secret_key: "O2UBus+7Ny66qqDTcPtD4zE/FuCItIZv/qqIrtoiOfdnde4TkmgKrieD/XAOi4Kw"
 
 # Configures Elixir's Logger
 config :logger, :console,

@@ -183,4 +183,168 @@ defmodule Timemanager.DataTest do
       assert %Ecto.Changeset{} = Data.change_clock(clock)
     end
   end
+
+
+
+  describe "managing" do
+    alias Timemanager.Data.Managing
+
+    import Timemanager.DataFixtures
+
+    @invalid_attrs %{isManager: nil}
+
+    test "list_managing/0 returns all managing" do
+      managing = managing_fixture()
+      assert Data.list_managing() == [managing]
+    end
+
+    test "get_managing!/1 returns the managing with given id" do
+      managing = managing_fixture()
+      assert Data.get_managing!(managing.id) == managing
+    end
+
+    test "create_managing/1 with valid data creates a managing" do
+      valid_attrs = %{isManager: true}
+
+      assert {:ok, %Managing{} = managing} = Data.create_managing(valid_attrs)
+      assert managing.isManager == true
+    end
+
+    test "create_managing/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Data.create_managing(@invalid_attrs)
+    end
+
+    test "update_managing/2 with valid data updates the managing" do
+      managing = managing_fixture()
+      update_attrs = %{isManager: false}
+
+      assert {:ok, %Managing{} = managing} = Data.update_managing(managing, update_attrs)
+      assert managing.isManager == false
+    end
+
+    test "update_managing/2 with invalid data returns error changeset" do
+      managing = managing_fixture()
+      assert {:error, %Ecto.Changeset{}} = Data.update_managing(managing, @invalid_attrs)
+      assert managing == Data.get_managing!(managing.id)
+    end
+
+    test "delete_managing/1 deletes the managing" do
+      managing = managing_fixture()
+      assert {:ok, %Managing{}} = Data.delete_managing(managing)
+      assert_raise Ecto.NoResultsError, fn -> Data.get_managing!(managing.id) end
+    end
+
+    test "change_managing/1 returns a managing changeset" do
+      managing = managing_fixture()
+      assert %Ecto.Changeset{} = Data.change_managing(managing)
+    end
+  end
+
+  describe "teams" do
+    alias Timemanager.Data.Team
+
+    import Timemanager.DataFixtures
+
+    @invalid_attrs %{name: nil}
+
+    test "list_teams/0 returns all teams" do
+      team = team_fixture()
+      assert Data.list_teams() == [team]
+    end
+
+    test "get_team!/1 returns the team with given id" do
+      team = team_fixture()
+      assert Data.get_team!(team.id) == team
+    end
+
+    test "create_team/1 with valid data creates a team" do
+      valid_attrs = %{name: "some name"}
+
+      assert {:ok, %Team{} = team} = Data.create_team(valid_attrs)
+      assert team.name == "some name"
+    end
+
+    test "create_team/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Data.create_team(@invalid_attrs)
+    end
+
+    test "update_team/2 with valid data updates the team" do
+      team = team_fixture()
+      update_attrs = %{name: "some updated name"}
+
+      assert {:ok, %Team{} = team} = Data.update_team(team, update_attrs)
+      assert team.name == "some updated name"
+    end
+
+    test "update_team/2 with invalid data returns error changeset" do
+      team = team_fixture()
+      assert {:error, %Ecto.Changeset{}} = Data.update_team(team, @invalid_attrs)
+      assert team == Data.get_team!(team.id)
+    end
+
+    test "delete_team/1 deletes the team" do
+      team = team_fixture()
+      assert {:ok, %Team{}} = Data.delete_team(team)
+      assert_raise Ecto.NoResultsError, fn -> Data.get_team!(team.id) end
+    end
+
+    test "change_team/1 returns a team changeset" do
+      team = team_fixture()
+      assert %Ecto.Changeset{} = Data.change_team(team)
+    end
+  end
+
+  describe "managing" do
+    alias Timemanager.Data.Managing
+
+    import Timemanager.DataFixtures
+
+    @invalid_attrs %{isManager: nil}
+
+    test "list_managing/0 returns all managing" do
+      managing = managing_fixture()
+      assert Data.list_managing() == [managing]
+    end
+
+    test "get_managing!/1 returns the managing with given id" do
+      managing = managing_fixture()
+      assert Data.get_managing!(managing.id) == managing
+    end
+
+    test "create_managing/1 with valid data creates a managing" do
+      valid_attrs = %{isManager: true}
+
+      assert {:ok, %Managing{} = managing} = Data.create_managing(valid_attrs)
+      assert managing.isManager == true
+    end
+
+    test "create_managing/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Data.create_managing(@invalid_attrs)
+    end
+
+    test "update_managing/2 with valid data updates the managing" do
+      managing = managing_fixture()
+      update_attrs = %{isManager: false}
+
+      assert {:ok, %Managing{} = managing} = Data.update_managing(managing, update_attrs)
+      assert managing.isManager == false
+    end
+
+    test "update_managing/2 with invalid data returns error changeset" do
+      managing = managing_fixture()
+      assert {:error, %Ecto.Changeset{}} = Data.update_managing(managing, @invalid_attrs)
+      assert managing == Data.get_managing!(managing.id)
+    end
+
+    test "delete_managing/1 deletes the managing" do
+      managing = managing_fixture()
+      assert {:ok, %Managing{}} = Data.delete_managing(managing)
+      assert_raise Ecto.NoResultsError, fn -> Data.get_managing!(managing.id) end
+    end
+
+    test "change_managing/1 returns a managing changeset" do
+      managing = managing_fixture()
+      assert %Ecto.Changeset{} = Data.change_managing(managing)
+    end
+  end
 end
