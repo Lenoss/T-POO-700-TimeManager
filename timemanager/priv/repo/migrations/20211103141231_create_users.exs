@@ -11,6 +11,7 @@ defmodule Timemanager.Repo.Migrations.CreateUsers do
       add :lastname, :string
       add :role, :string
       add :zipcode, :string
+      add :password_hash, :string
 
       timestamps()
     end

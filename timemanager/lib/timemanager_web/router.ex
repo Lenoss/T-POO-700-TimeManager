@@ -1,5 +1,6 @@
 defmodule TimemanagerWeb.Router do
   use TimemanagerWeb, :router
+  alias Timemanager.Guardian
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,16 +15,36 @@ defmodule TimemanagerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :jwt_authenticated do
+    plug Guardian.AuthPipeline
+  end
+
   scope "/", TimemanagerWeb do
     pipe_through :browser
 
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
   scope "/api", TimemanagerWeb do
     pipe_through :api
-    resources "/users", UserController
+
+    post "/sign_in", UserController, :sign_in
+    # post "/log_in"
+    scope "/users" do
+      post("/", UserController, :create)
+    end
+  end
+
+  # Other scopes may use custom stacks.
+  scope "/api", TimemanagerWeb do
+    pipe_through [:api, :jwt_authenticated]
+    # resources "/users", UserController
+    scope "/users" do
+      get("/", UserController, :index)
+      get("/:userID", UserController, :show)
+      delete("/:userID", UserController, :delete)
+      put("/:userID", UserController, :update)
+    end
 
     scope "/clocks" do
       get "/:userID", ClockController, :show

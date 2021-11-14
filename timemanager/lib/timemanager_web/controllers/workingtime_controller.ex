@@ -12,7 +12,7 @@ defmodule TimemanagerWeb.WorkingtimeController do
   end
 
   def create(conn, %{"user_id" => user_id}) do
-    params = Map.merge(%{"user_id" => user_id}, conn.body_params["workingtime"])
+    params = Map.merge(%{"user" => user_id}, conn.body_params["workingtimes"])
 
     with {:ok, %Workingtime{} = workingtime} <- Data.create_workingtime(params) do
       conn

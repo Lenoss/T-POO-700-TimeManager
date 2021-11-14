@@ -22,9 +22,9 @@
 import EditProfileForm from "./Profile/EditProfileForm";
 import UserCard from "./Profile/UserCard";
 import UserReportCard from "./Profile/UserReportCard";
+import authHeader from "../services/auth-header";
 
 import axios from "axios";
-let user = "1";
 
 const apiEndPoint = process.env.VUE_APP_API_ENDPOINT;
 export default {
@@ -33,15 +33,25 @@ export default {
     UserCard,
     UserReportCard,
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   data() {
     return {
       model: {},
       user: {},
     };
   },
+  mounted() {
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
+  },
   created() {
     axios
-      .get(`${apiEndPoint}/users/${user}`)
+      .get(`${apiEndPoint}/users/${this.currentUser.user_id}`, authHeader())
       .then((response) => {
         // JSON responses are automatically parsed.
 
@@ -60,7 +70,7 @@ export default {
       };
       delete objectUser.user.id;
       axios
-        .put(`${apiEndPoint}/users/1`, objectUser)
+        .put(`${apiEndPoint}/users/${this.currentUser.user_id}`, objectUser, authHeader())
         .then((response) => {
           alert("Profile edited");
         })
@@ -78,7 +88,7 @@ export default {
           clocks: clock,
         };
         axios
-          .post(`${apiEndPoint}/clocks/1`, objectClock)
+          .post(`${apiEndPoint}/clocks/${this.currentUser.user_id}`, objectClock, authHeader())
           .then((response) => {
             alert("Clocked in");
           })
@@ -94,7 +104,7 @@ export default {
           clocks: clock,
         };
         axios
-          .post(`${apiEndPoint}/clocks/1`, objectClock)
+          .post(`${apiEndPoint}/clocks/${this.currentUser.user_id}`, objectClock, authHeader())
           .then((response) => {
             alert("Clocked in");
           })
@@ -112,7 +122,7 @@ export default {
         workingtimes: workingtime,
       };
       axios
-        .post(`${apiEndPoint}/workingtimes/1`, objectWorkingTime)
+        .post(`${apiEndPoint}/workingtimes/${this.currentUser.user_id}`, objectWorkingTime, authHeader())
         .then((response) => {
           console.log("new schedule added");
         })
@@ -127,7 +137,7 @@ export default {
         )
       ) {
         axios
-          .delete(`${apiEndPoint}/users/1`)
+          .delete(`${apiEndPoint}/users/${this.currentUser.user_id}`)
           .then((response) => {
             alert("User deleted");
           })

@@ -8,34 +8,24 @@
       />
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="email">Email</label>
           <input
-            v-model="user.username"
-            v-validate="'required'"
+            v-model="user.email"
             type="text"
             class="form-control"
-            name="username"
+            name="email"
           />
-          <!-- <div
-            v-if="errors.has('username')"
-            class="alert alert-danger"
-            role="alert"
-          >Username is required!</div> -->
+
         </div>
         <div class="form-group">
           <label for="password">Password</label>
           <input
             v-model="user.password"
-            v-validate="'required'"
             type="password"
             class="form-control"
             name="password"
           />
-          <!-- <div
-            v-if="errors.has('password')"
-            class="alert alert-danger"
-            role="alert"
-          >Password is required!</div> -->
+
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" :disabled="loading">
@@ -50,30 +40,48 @@
     </div>
   </div>
 </template>
-
 <script>
-import User from '../models/user';
+import User from "../models/user";
 
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
-      user: new User('', ''),
+      user: new User("", ""),
       loading: false,
-      message: ''
+      message: "",
     };
   },
   computed: {
     loggedIn() {
-    }
+      return this.$store.state.auth.status.loggedIn;
+    },
   },
   created() {
     if (this.loggedIn) {
+      this.$router.push("/profile");
     }
   },
   methods: {
+    handleLogin() {
+      this.loading = true;
 
-  }
+      if (this.user.email && this.user.password) {
+        this.$store.dispatch("auth/login", this.user).then(
+          () => {
+            this.$router.push("/profile");
+          },
+          (error) => {
+            this.loading = false;
+            this.message =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString();
+          }
+        );
+      }
+    },
+  },
 };
 </script>
 
@@ -89,6 +97,7 @@ label {
 }
 
 .card {
+  /* background-color: #f7f7f7; */
   padding: 20px 25px 30px;
   margin: 0 auto 25px;
   margin-top: 50px;

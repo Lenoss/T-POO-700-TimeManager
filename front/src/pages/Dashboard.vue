@@ -63,6 +63,7 @@ import PieChart from "./Chart/PieChart.vue";
 import AreaChart from "./Chart/AreaChart.vue";
 import axios from "axios";
 import moment from "moment";
+import authHeader from "../services/auth-header";
 
 const apiEndPoint = process.env.VUE_APP_API_ENDPOINT;
 
@@ -106,16 +107,22 @@ export default {
         overtime: 0,
         normal: 0,
         night: 1,
-        majorated : 0
-      }
+        majorated: 0,
+      },
     };
+  },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
   },
   created() {
     let currentYear = new Date().getFullYear();
     axios
       .get(
         // `${apiEndPoint}/workingtimes/${user}?start=${currentYear}-01-01T00:00:00&end=${currentYear}-12-31T23:59:59`
-        `${apiEndPoint}/workingtimes/${user}`
+        `${apiEndPoint}/workingtimes/${this.currentUser.user_id}`,
+        authHeader()
       )
       .then((response) => {
         let yearWorkingTimes = response.data.data;
@@ -148,11 +155,10 @@ export default {
           // Pie Chart Majorated hours
           if (diff > 7) {
             this.pieData.overtime += diff - 7;
-          }
-          else this.pieData.normal += diff;
+          } else this.pieData.normal += diff;
 
           // Pie Chart weekend hours
-          if (elementStart.getDay() == 0 || elementStart.getDay() == 6){
+          if (elementStart.getDay() == 0 || elementStart.getDay() == 6) {
             this.pieData.majorated += diff;
           }
           // if (elementStart.getHours() < 7 && elementStart.getHours() >= 21) {

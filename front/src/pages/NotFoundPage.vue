@@ -10,7 +10,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <router-link :to="{path:'/'}" class="navbar-brand">Site title</router-link>
+          <router-link :to="{path:'/'}" class="navbar-brand">Back</router-link>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -49,10 +49,7 @@
             </li>
           </ul>
         </nav>
-        <div class="copyright pull-right">
-          &copy; 2018, made with
-          <i class="fa fa-heart heart"></i> by Black admin
-        </div>
+
       </div>
     </footer>
   </div>
