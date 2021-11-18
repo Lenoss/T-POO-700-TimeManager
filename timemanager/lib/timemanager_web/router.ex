@@ -1,7 +1,7 @@
 defmodule TimemanagerWeb.Router do
   use TimemanagerWeb, :router
   alias Timemanager.Guardian
-  use Pow.Phoenix.Router
+
 
   pipeline :browser do
     plug :accepts, ["html"]

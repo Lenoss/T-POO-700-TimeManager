@@ -1,6 +1,5 @@
 defmodule Timemanager.Data.User do
   use Ecto.Schema
-  use Pow.Ecto.Schema
 
   import Ecto.Changeset
   import Bcrypt

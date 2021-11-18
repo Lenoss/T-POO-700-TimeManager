@@ -5,7 +5,7 @@ import routes from './routes'
 const router = new VueRouter({
   routes, // short for routes: routes
   linkExactActiveClass: 'active',
-  scrollBehavior: to => {
+  scrollBehavior: to => {   
     if (to.hash) {
       return { selector: to.hash }
     } else {
@@ -14,26 +14,34 @@ const router = new VueRouter({
   }
 })
 router.beforeEach((to, from, next) => {
+  
   if (to.meta.requiresAuth) {
+    
     const authUser = JSON.parse(window.localStorage.getItem('user'))
     if (!authUser || !authUser.jwt) {
+      
       next({ name: 'login' })
     } else if (to.meta.genManagerAuth) {
       const authUser = JSON.parse(window.localStorage.getItem('user'))
       if (authUser.role === 'GeneralManager') {
         next()
       } else {
+        
         next('/dashboard')
       }
-    } else if (to.meta.memberAuth) {
+    } else if (to.meta.memberAuth || to.meta.managerAuth) {
+      console.log("test")
       const authUser = JSON.parse(window.localStorage.getItem('user'))
       if (authUser.role === 'Member') {
+
         next()
       } else {
         next('/profile')
+        
       }
     }
   } else {
+    
     next()
   }
 })

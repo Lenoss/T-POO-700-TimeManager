@@ -44,6 +44,11 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+  # Guardian config
+config :Timemanager, Timemanager.Guardian,
+issuer: "Timemanager",
+secret_key: "O2UBus+7Ny66qqDTcPtD4zE/FuCItIZv/qqIrtoiOfdnde4TkmgKrieD/XAOi4Kw"
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
